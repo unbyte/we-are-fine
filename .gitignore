@@ -1,0 +1,4 @@
+.idea
+config.py
+data/database.db
+run.log
