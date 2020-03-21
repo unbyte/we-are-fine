@@ -22,7 +22,7 @@ scheduler._logger = logging
 scheduler.add_listener(lambda event: sender.alert("计划任务出错", str(event)), EVENT_JOB_ERROR)
 
 
-@scheduler.task('cron', id='test', second='0', minute='0', hour='8-16/2', day='*', month='*', year='*')
+@scheduler.task('cron', id='main', second='0', minute='0', hour='8-16/2', day='*', month='*', year='*')
 def sign_all():
     today: int = int(time.time()) - int(time.time() - time.timezone) % 86400
     users: List[User] = db.session.query(User).filter(~User.id.in_(

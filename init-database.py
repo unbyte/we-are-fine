@@ -4,9 +4,9 @@
 """
 import os
 
-from app import db, model
-
 if not os.path.exists("./data/database.db"):
+    from app import db, model
+
     # 初始化数据库模型
     model.initialize()
 
