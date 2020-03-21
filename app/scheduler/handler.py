@@ -38,8 +38,8 @@ def sign_all():
 
 
 def sign(user: User) -> None:
-    success, info = Job(user.username, user.password, user.ip).do()
+    success, title, info = Job(user.username, user.password, user.ip).do()
 
-    Record(user.id, success, info, int(time.time())).save()
+    Record(user.id, success, f"{title}\n{info}", int(time.time())).save()
 
-    sender.send(user.email, "打卡成功" if success else "打卡失败", info)
+    sender.send(user.email, title, info)

@@ -163,27 +163,27 @@ class Job:
         try:
             result: dict = json.loads(resp.text)
             if "success" in result and result["success"]:
-                return f"{result['data']['ipstr']} @ {result['data']['ipcity']}"
+                return f"打卡ip: {result['data']['ipstr']}\n识别位置: {result['data']['ipcity']}"
             return resp.text
         except Exception:
             return self._unexpected_exception
 
-    def do(self) -> Tuple[bool, str]:
+    def do(self) -> Tuple[bool, str, str]:
         today = time.strftime('%m/%d/%Y')
         # 登陆
         success, msg = self._login()
         if not success:
-            return False, f"{today} 登陆失败: {msg}"
+            return False, f"{today} 登陆失败", msg
         # 进入平台
         success, msg = self._login_service()
         if not success:
-            return False, f"{today} 鉴权失败 {msg}"
+            return False, f"{today} 鉴权失败", msg
         # 获取信息
         success, msg = self._get_info()
         if not success:
-            return False, f"{today} 获取已有信息失败 {msg}"
+            return False, f"{today} 获取已有信息失败", msg
         # 打卡
         success, msg = self._update_info()
         if not success:
-            return False, f"{today} 打卡失败 {msg}"
-        return True, f"{today} 打卡成功 {self._get_returned_ip()}"
+            return False, f"{today} 打卡失败", msg
+        return True, f"{today} 打卡成功", self._get_returned_ip()
