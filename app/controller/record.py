@@ -7,6 +7,11 @@ from app.model import Record
 @app.route('/api/record/list', methods=['GET'])
 @auth
 def api_record_list():
+    """
+    GET /api/record/list
+
+    success: 200 {code:0, data:[{time, success, info}]}
+    """
     try:
         records = Record.query.filter(Record.user_id == get_user_id()).all()
 

@@ -11,6 +11,12 @@ from app.model import User
 @app.route('/api/user/register', methods=['POST'])
 @json_required
 def api_user_register():
+    """
+    POST /api/user/register
+        {username, password, ip, email}
+
+    success: 200 {code:0, msg}
+    """
     try:
         json = request.json
 
@@ -20,17 +26,23 @@ def api_user_register():
         new_user = User(json["username"], json["password"], json["email"], json["ip"])
         new_user.save()
         if not new_user.id > 0:
-            return response_duplicated_user()
+            return response_internal_error()
 
         log_in(new_user.id)
         return response_msg(0, "register successfully", 200)
     except Exception:
-        return response_internal_error()
+        return response_duplicated_user()
 
 
 @app.route('/api/user/login', methods=['POST'])
 @json_required
 def api_user_login():
+    """
+    POST /api/user/login
+        {username, password}
+
+    success: 200 {code:0, msg}
+    """
     try:
         json = request.json
 
@@ -49,6 +61,11 @@ def api_user_login():
 
 @app.route('/api/user/logout', methods=['GET'])
 def api_user_logout():
+    """
+    GET /api/user/logout
+
+    success: 200 {code:0, msg}
+    """
     log_out()
     return response_msg(0, "logout successfully", 200)
 
@@ -56,6 +73,11 @@ def api_user_logout():
 @app.route('/api/user/info', methods=['GET'])
 @auth
 def api_user_get_info():
+    """
+    GET /api/user/info
+
+    success: 200 {code:0, data:{username, password, email, ip, enable}}
+    """
     try:
         user = get_user()
         if user is None:
@@ -76,6 +98,12 @@ def api_user_get_info():
 @auth
 @json_required
 def api_user_update_info():
+    """
+    POST /api/user/register
+        {username, password, email, ip, enable}
+
+    success: 200 {code:0, msg}
+    """
     try:
         user = get_user()
         if user is None:

@@ -26,7 +26,7 @@ def response_invalid_request() -> tuple:
 
 
 def response_duplicated_user() -> tuple:
-    return response_msg(5, "duplicated user", 400)
+    return response_msg(5, "duplicated user", 409)
 
 
 def response_internal_error() -> tuple:
