@@ -1,0 +1,12 @@
+version: '3'
+services:
+  we-are-fine:
+    build:
+      context: .
+    image: we-are-fine-image
+    restart: always
+    ports:
+      - "8080:8316"
+    volumes:
+      - ./data:/app/data
+    container_name: we-are-fine
