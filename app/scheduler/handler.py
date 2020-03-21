@@ -39,7 +39,10 @@ def sign_all():
 
 def sign(user: User) -> None:
     success, title, info = Job(user.username, user.password, user.ip).do()
-
-    Record(user.id, success, f"{title}\n{info}", int(time.time())).save()
+    try:
+        Record(user.id, success, f"{title}\n{info}", int(time.time())).save()
+    except Exception:
+        db.session.rollback()
+        info += "\n该次打卡记录数据库时失败"
 
     sender.send(user.email, title, info)

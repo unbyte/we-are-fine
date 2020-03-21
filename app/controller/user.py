@@ -1,6 +1,7 @@
 from flask import request
+from sqlalchemy.exc import IntegrityError
 
-from app import app
+from app import app, db
 from app.handler.auth import log_in, log_out, auth, get_user
 from app.handler.request import json_required
 from app.handler.response import response_invalid_request, response_msg, response_duplicated_user, response_no_record, \
@@ -30,8 +31,10 @@ def api_user_register():
 
         log_in(new_user.id)
         return response_msg(0, "register successfully", 200)
-    except Exception:
+    except IntegrityError:
         return response_duplicated_user()
+    except Exception:
+        return response_internal_error()
 
 
 @app.route('/api/user/login', methods=['POST'])
@@ -129,5 +132,7 @@ def api_user_update_info():
         user.update()
 
         return response_msg(0, "update successfully", 200)
-    except Exception:
+    except IntegrityError:
         return response_duplicated_user()
+    except Exception:
+        return response_internal_error()
