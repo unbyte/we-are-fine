@@ -9,7 +9,11 @@ app.secret_key = app.config['SECRET_KEY']
 db = SQLAlchemy(app)
 
 from . import notifier
-from . import scheduler
-from . import controller
 
+from . import controller
 controller.initialize()
+
+from . import scheduler
+scheduler.initialize()
+
+
