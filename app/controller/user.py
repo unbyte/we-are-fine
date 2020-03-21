@@ -130,4 +130,4 @@ def api_user_update_info():
 
         return response_msg(0, "update successfully", 200)
     except Exception:
-        return response_internal_error()
+        return response_duplicated_user()
