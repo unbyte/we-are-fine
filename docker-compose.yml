@@ -8,5 +8,5 @@ services:
     ports:
       - "8080:8316"
     volumes:
-      - ./data:/app/data
+      - ./data/:/app/data/
     container_name: we-are-fine
