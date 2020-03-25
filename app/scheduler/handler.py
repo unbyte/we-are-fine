@@ -7,7 +7,7 @@ from flask_apscheduler import APScheduler
 
 from app import db
 from app.model import User, Record
-from app.notifier import sender
+from app.notifier import get_notifier, Notifier, alert
 from app.scheduler.job import Job
 
 scheduler = APScheduler()
@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO,
                     filemode='a')
 
 scheduler._logger = logging
-scheduler.add_listener(lambda event: sender.alert("计划任务出错", str(event)), EVENT_JOB_ERROR)
+scheduler.add_listener(lambda event: alert("计划任务出错", str(event)), EVENT_JOB_ERROR)
 
 
 @scheduler.task('cron', id='main', second='0', minute='0', hour='8-16/2', day='*', month='*', year='*')
@@ -31,18 +31,24 @@ def sign_all():
             .filter(Record.success)
             .subquery()
     )).filter(User.enable).all()
+    if len(users) == 0:
+        return
 
+    sender = get_notifier()
     for user in users:
-        sign(user)
+        sign(user, sender)
         time.sleep(1)
+    sender.disconnect()
 
 
-def sign(user: User) -> None:
+def sign(user: User, sender: Notifier) -> None:
     success, title, info = Job(user.username, user.password, user.ip).do()
+    try:
+        sender.send(user.email, title, info)
+    except Exception:
+        info += "\n通知邮件发送失败"
+
     try:
         Record(user.id, success, f"{title}\n{info}", int(time.time())).save()
     except Exception:
         db.session.rollback()
-        info += "\n该次打卡记录数据库时失败"
-
-    sender.send(user.email, title, info)
